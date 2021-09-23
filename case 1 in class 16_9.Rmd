@@ -1,0 +1,86 @@
+---
+title: "Case 1 BNP"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r }
+getwd()
+setwd("~/undervisning/SOK1004/h2021")
+
+## ----setup, include=FALSE-----------------------------------------------------------------------------------------------------------------------
+#knitr::opts_chunk$set(echo = TRUE)
+#knitr::opts_chunk$set(comment=NA)
+
+
+## -----------------------------------------------------------------------------------------------------------------------------------------------
+library(PxWebApiData)
+library(tidyverse)
+
+
+## -----------------------------------------------------------------------------------------------------------------------------------------------
+variabler <- ApiData("http://data.ssb.no/api/v0/no/table/09842", returnMetaFrames = TRUE)
+names(variabler)
+
+
+## -----------------------------------------------------------------------------------------------------------------------------------------------
+verdier <- ApiData("https://data.ssb.no/api/v0/no/table/09842/", returnMetaData = TRUE)
+verdier
+
+
+## -----------------------------------------------------------------------------------------------------------------------------------------------
+tabell <- ApiData("https://data.ssb.no/api/v0/no/table/09842/",
+                  Tid = paste(1970:2020),
+                  ContentsCode = "BNP")
+
+
+## -----------------------------------------------------------------------------------------------------------------------------------------------
+head(tabell[[1]])
+
+
+## -----------------------------------------------------------------------------------------------------------------------------------------------
+head(tabell[[2]])
+
+
+## -----------------------------------------------------------------------------------------------------------------------------------------------
+bnp <- tabell[[1]]
+str(bnp)
+
+
+## -----------------------------------------------------------------------------------------------------------------------------------------------
+bnp <- bnp %>%
+  mutate(år=parse_number(år)) %>% 
+  rename(BNP=value)
+str(bnp)
+head(bnp)
+
+
+## -----------------------------------------------------------------------------------------------------------------------------------------------
+bnp %>%
+  ggplot(aes(x=år, y=BNP)) +
+  geom_line() + geom_point()
+
+
+## -----------------------------------------------------------------------------------------------------------------------------------------------
+bnp %>%
+  ggplot(aes(x=år, y=BNP)) +
+  geom_line(color="blue") +
+  scale_y_continuous(labels = scales::comma) +
+  labs(title="Bruttonasjonalprodukt - BNP \n (kr per innbygger)",
+       x =" ",
+       y = "kr per innbygger") +
+  theme_bw()
+
+
+```
+
+skrive tekst
